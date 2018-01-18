@@ -1,7 +1,11 @@
 package store
 
 import (
+	"encoding/hex"
+	"encoding/json"
+
 	"github.com/boltdb/bolt"
+	guid "github.com/bsm/go-guid"
 )
 
 type BoltDB struct {
@@ -34,8 +38,22 @@ func NewBoltDB(fp string) (*BoltDB, error) {
 }
 
 func (b BoltDB) Insert(m ImageMeta) error {
+	// Encode image meta
+	encoded, err := json.Marshal(m)
+	if err != nil {
+		return err
+	}
 
-	return nil
+	// Generate GUID
+	id := guid.New96()
+	guid := hex.EncodeToString(id.Bytes())
+
+	// Insert into the db
+	return b.db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte(b.bucketName))
+		err := b.Put([]byte(guid), encoded)
+		return err
+	})
 }
 
 func (b BoltDB) Get(guid string) (ImageMeta, error) {

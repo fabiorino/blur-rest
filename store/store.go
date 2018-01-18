@@ -27,7 +27,6 @@ type Image struct {
 }
 
 type Store interface {
-	Init() error
 	Insert(ImageMeta) error
 	Get(string) (ImageMeta, error)
 	Delete(string) error

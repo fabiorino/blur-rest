@@ -13,6 +13,7 @@ import (
 
 	"blur-rest/config"
 	"blur-rest/handlers"
+	"blur-rest/store"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jessevdk/go-flags"
@@ -53,11 +54,15 @@ func main() {
 	// Write log messages on the file we've just created
 	gin.DefaultWriter = io.MultiWriter(logFile)
 
-	router := gin.Default()
+	// Init store
+	store := store.NewBoltDB("images.db")
+	store.Init()
 
 	// Setup global config
 	config.GlobalConfig.Fqdn = options.Fqdn
 	config.GlobalConfig.Fqdn = options.Port
+
+	router := gin.Default()
 
 	// Setup endpoints
 	router.POST("/blur", handlers.PostImageMetaHandler)

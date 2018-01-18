@@ -51,16 +51,20 @@ func main() {
 		log.Fatalln(errMsg)
 	}
 
-	// Write log messages on the file we've just created
-	gin.DefaultWriter = io.MultiWriter(logFile)
+	// Write log messages on the file we've just created and the stdout
+	gin.DefaultWriter = io.MultiWriter(logFile, os.Stdout)
 
 	// Init store
-	store := store.NewBoltDB("images.db")
-	store.Init()
+	store, err := store.NewBoltDB("images.db")
+	if err != nil {
+		errMsg := fmt.Sprintf("Could not init BoltDB: %s", err.Error())
+		log.Fatalln(errMsg)
+	}
 
 	// Setup global config
 	config.GlobalConfig.Fqdn = options.Fqdn
-	config.GlobalConfig.Fqdn = options.Port
+	config.GlobalConfig.Port = options.Port
+	config.GlobalConfig.Store = store
 
 	router := gin.Default()
 

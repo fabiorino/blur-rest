@@ -24,7 +24,7 @@ func NewBoltDB(fp string) (*BoltDB, error) {
 	// New bucket
 	bName := "images"
 	err = database.Update(func(tx *bolt.Tx) error {
-		_, err := tx.CreateBucket([]byte(bName))
+		_, err := tx.CreateBucketIfNotExists([]byte(bName))
 		if err != nil {
 			return err
 		}

@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 
 	"github.com/boltdb/bolt"
-	guid "github.com/bsm/go-guid"
+	"github.com/bsm/go-guid"
 )
 
 type BoltDB struct {
@@ -25,10 +25,7 @@ func NewBoltDB(fp string) (*BoltDB, error) {
 	bName := "images"
 	err = database.Update(func(tx *bolt.Tx) error {
 		_, err := tx.CreateBucketIfNotExists([]byte(bName))
-		if err != nil {
-			return err
-		}
-		return nil
+		return err
 	})
 	if err != nil {
 		return nil, err
@@ -51,8 +48,7 @@ func (b BoltDB) Insert(m ImageMeta) error {
 	// Insert into the db
 	return b.db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(b.bucketName))
-		err := b.Put([]byte(guid), encoded)
-		return err
+		return b.Put([]byte(guid), encoded)
 	})
 }
 
@@ -65,12 +61,7 @@ func (b BoltDB) Get(guid string) (ImageMeta, error) {
 		v := b.Get([]byte(guid))
 
 		// Decode JSON
-		err := json.Unmarshal(v, &meta)
-		if err != nil {
-			return err
-		}
-
-		return nil
+		return json.Unmarshal(v, &meta)
 	})
 
 	return meta, err

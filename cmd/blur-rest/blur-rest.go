@@ -20,8 +20,9 @@ import (
 )
 
 var options struct {
-	Fqdn string `short:"f" long:"fqdn" description:"The Fully Qualified Domain Name of the server" required:"true"`
-	Port string `short:"p" long:"port" description:"The listening port for incoming requests" required:"true"`
+	Fqdn   string `short:"f" long:"fqdn" description:"The Fully Qualified Domain Name of the server" required:"true"`
+	Port   string `short:"p" long:"port" description:"The listening port for incoming requests" required:"true"`
+	BoltDB string `short:"b" long:"boltdb" description:"Absolute path of the BoltDB database file" default:"images.db"`
 }
 
 func init() {
@@ -55,7 +56,7 @@ func main() {
 	gin.DefaultWriter = io.MultiWriter(logFile, os.Stdout)
 
 	// Init store
-	store, err := store.NewBoltDB("images.db")
+	store, err := store.NewBoltDB(options.BoltDB)
 	if err != nil {
 		errMsg := fmt.Sprintf("Could not init BoltDB: %s", err.Error())
 		log.Fatalln(errMsg)

@@ -80,6 +80,5 @@ func (b BoltDB) Purge() error {
 }
 
 func (b BoltDB) Close() error {
-
-	return nil
+	return b.db.Close()
 }

@@ -77,8 +77,10 @@ func (b BoltDB) Get(guid string) (ImageMeta, error) {
 }
 
 func (b BoltDB) Delete(guid string) error {
-
-	return nil
+	return b.db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte(b.bucketName))
+		return b.Delete([]byte(guid))
+	})
 }
 
 func (b BoltDB) Purge() error {

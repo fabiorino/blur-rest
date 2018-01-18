@@ -3,7 +3,7 @@ package store
 import "fmt"
 
 type ImageMeta struct {
-	Blur float32 `json:"user"`
+	Blur float32 `json:"blur"`
 }
 
 func (i *ImageMeta) Validate() error {

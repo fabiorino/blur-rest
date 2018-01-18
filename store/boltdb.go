@@ -57,8 +57,23 @@ func (b BoltDB) Insert(m ImageMeta) error {
 }
 
 func (b BoltDB) Get(guid string) (ImageMeta, error) {
+	var meta ImageMeta
 
-	return ImageMeta{}, nil
+	err := b.db.View(func(tx *bolt.Tx) error {
+		// Get value
+		b := tx.Bucket([]byte(b.bucketName))
+		v := b.Get([]byte(guid))
+
+		// Decode JSON
+		err := json.Unmarshal(v, &meta)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	return meta, err
 }
 
 func (b BoltDB) Delete(guid string) error {

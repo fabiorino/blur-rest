@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"blur-rest/blur"
 	"blur-rest/config"
 	"io/ioutil"
 	"os"
@@ -62,4 +63,17 @@ func UploadImageHandler(c *gin.Context) {
 		})
 		return
 	}
+
+	// Create destionation image file
+	destImage, err := ioutil.TempFile("", "destination-image")
+	if err != nil {
+		c.JSON(500, config.ErrorWithStatus{
+			Code:    config.TempFileError,
+			Message: "Could not create destination image",
+		})
+		return
+	}
+
+	// Blur
+	blur.Blur(srcImage, destImage, meta.Blur)
 }

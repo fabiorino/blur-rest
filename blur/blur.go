@@ -10,14 +10,9 @@ import (
 	"github.com/esimov/stackblur-go"
 )
 
-func Blur(imgSrc string, imgDest string, radius int) error {
-	// Open and decode source image
-	img, err := os.Open(imgSrc)
-	if err != nil {
-		return err
-	}
-	defer img.Close()
-	src, _, err := image.Decode(img)
+func Blur(imgSrc *os.File, imgDest *os.File, radius int) error {
+	// Decode source image
+	src, _, err := image.Decode(imgSrc)
 	if err != nil {
 		return err
 	}
@@ -40,7 +35,7 @@ func Blur(imgSrc string, imgDest string, radius int) error {
 	return encodeGIF(imgs, imgDest)
 }
 
-func encodeGIF(imgs []image.Image, path string) error {
+func encodeGIF(imgs []image.Image, imgDest *os.File) error {
 	outGif := &gif.GIF{}
 	for _, inPng := range imgs {
 		inGif := image.NewPaletted(inPng.Bounds(), palette.Plan9)
@@ -48,10 +43,5 @@ func encodeGIF(imgs []image.Image, path string) error {
 		outGif.Image = append(outGif.Image, inGif)
 		outGif.Delay = append(outGif.Delay, 0)
 	}
-	f, err := os.Open(path)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-	return gif.EncodeAll(f, outGif)
+	return gif.EncodeAll(imgDest, outGif)
 }

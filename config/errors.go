@@ -15,4 +15,5 @@ const (
 	ReadError
 	WriteError
 	CloseError
+	BlurError
 )

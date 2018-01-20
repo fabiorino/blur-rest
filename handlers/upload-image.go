@@ -3,6 +3,7 @@ package handlers
 import (
 	"blur-rest/blur"
 	"blur-rest/config"
+	"fmt"
 	"io/ioutil"
 	"os"
 
@@ -75,5 +76,26 @@ func UploadImageHandler(c *gin.Context) {
 	}
 
 	// Blur
-	blur.Blur(srcImage, destImage, meta.Blur)
+	err = blur.Blur(srcImage, destImage, meta.Blur)
+	if err != nil {
+		errMsg := fmt.Sprintf("Could not blur the image: %s", err.Error())
+		c.JSON(500, config.ErrorWithStatus{
+			Code:    config.BlurError,
+			Message: errMsg,
+		})
+		return
+	}
+
+	// Close destination image file
+	if err := destImage.Close(); err != nil {
+		c.JSON(500, config.ErrorWithStatus{
+			Code:    config.CloseError,
+			Message: "Could not close destination image file",
+		})
+		return
+	}
+
+	c.Header("Content-Transfer-Encoding", "binary")
+	c.Header("Content-Type", "application/octet-stream")
+	c.File(destImage.Name())
 }

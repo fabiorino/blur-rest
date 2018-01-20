@@ -6,7 +6,8 @@ type ErrorWithStatus struct {
 }
 
 const (
-	Base int = 1 + iota
-	Binding
-	JSONBody
+	BaseError int = 1 + iota
+	BindingError
+	JSONBodyError
+	StoreError
 )

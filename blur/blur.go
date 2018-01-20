@@ -7,7 +7,7 @@ import (
 	"image/gif"
 	"os"
 
-	stackblur "github.com/esimov/stackblur-go"
+	"github.com/esimov/stackblur-go"
 )
 
 func Blur(imgSrc string, imgDest string, radius int) error {

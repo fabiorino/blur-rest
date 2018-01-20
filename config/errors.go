@@ -10,4 +10,9 @@ const (
 	BindingError
 	JSONBodyError
 	StoreError
+	GUIDNotFoundError
+	TempFileError
+	ReadError
+	WriteError
+	CloseError
 )

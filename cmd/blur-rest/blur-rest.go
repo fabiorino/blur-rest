@@ -71,7 +71,7 @@ func main() {
 
 	// Setup endpoints
 	router.POST("/blur", handlers.PostImageMetaHandler)
-	router.PUT("/blur/{id}", handlers.UploadImageHandler)
+	router.PUT("/blur/:guid", handlers.UploadImageHandler)
 
 	// Setup server parameters
 	srv := &http.Server{

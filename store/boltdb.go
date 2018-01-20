@@ -34,11 +34,11 @@ func NewBoltDB(fp string) (*BoltDB, error) {
 	return &BoltDB{FilePath: fp, db: database, bucketName: bName}, nil
 }
 
-func (b BoltDB) Insert(m ImageMeta) error {
+func (b BoltDB) Insert(m ImageMeta) (string, error) {
 	// Encode image meta
 	encoded, err := json.Marshal(m)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	// Generate GUID
@@ -46,10 +46,15 @@ func (b BoltDB) Insert(m ImageMeta) error {
 	guid := hex.EncodeToString(id.Bytes())
 
 	// Insert into the db
-	return b.db.Update(func(tx *bolt.Tx) error {
+	err = b.db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(b.bucketName))
 		return b.Put([]byte(guid), encoded)
 	})
+	if err != nil {
+		return "", err
+	}
+
+	return guid, nil
 }
 
 func (b BoltDB) Get(guid string) (ImageMeta, error) {

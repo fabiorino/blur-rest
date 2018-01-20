@@ -35,5 +35,8 @@ func PostImageMetaHandler(c *gin.Context) {
 	}
 	meta.ApplyDefaults()
 
+	// Store meta
+	config.GlobalConfig.Store.Insert(meta)
+
 	c.JSON(200, response{})
 }

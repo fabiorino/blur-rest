@@ -23,7 +23,7 @@ func Blur(imgSrc string, imgDest string, radius int) error {
 	}
 
 	// Blur frame by frame
-	var imgs []image.Image
+	imgs := make([]image.Image, radius)
 	done := make(chan struct{}, radius)
 	for i := 0; i < radius; i++ {
 		go func() {

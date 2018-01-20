@@ -14,10 +14,12 @@ type response struct {
 
 // PostImageMetaHandler receives the JSON data posted by the user and stores it
 func PostImageMetaHandler(c *gin.Context) {
+	var err error
+
 	var meta store.ImageMeta
 
 	// Bind JSON
-	if err := c.BindJSON(&meta); err != nil {
+	if err = c.BindJSON(&meta); err != nil {
 		c.JSON(400, config.ErrorWithStatus{
 			Code:    config.BindingError,
 			Message: "Could not bind the JSON body",
@@ -26,7 +28,7 @@ func PostImageMetaHandler(c *gin.Context) {
 	}
 
 	// Validate meta and apply defaults
-	if err := meta.Validate(); err != nil {
+	if err = meta.Validate(); err != nil {
 		c.JSON(400, config.ErrorWithStatus{
 			Code:    config.JSONBodyError,
 			Message: err.Error(),
@@ -37,7 +39,7 @@ func PostImageMetaHandler(c *gin.Context) {
 
 	// Store meta
 	var guid string
-	if guid, err := config.GlobalConfig.Store.Insert(meta); err != nil {
+	if guid, err = config.GlobalConfig.Store.Insert(meta); err != nil {
 		c.JSON(500, config.ErrorWithStatus{
 			Code:    config.StoreError,
 			Message: "Could not store meta",
@@ -45,5 +47,10 @@ func PostImageMetaHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, response{})
+	r := response{
+		GUID: guid,
+		URL:  "http://" + config.GlobalConfig.Fqdn + ":" + config.GlobalConfig.Port + "/blur/" + guid,
+	}
+
+	c.JSON(200, r)
 }

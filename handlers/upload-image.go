@@ -56,11 +56,12 @@ func UploadImageHandler(c *gin.Context) {
 		return
 	}
 
-	// Close source image file
-	if err := srcImage.Close(); err != nil {
+	// Open source image file
+	srcImage, err = os.Open(srcImage.Name())
+	if err != nil {
 		c.JSON(500, config.ErrorWithStatus{
 			Code:    config.CloseError,
-			Message: "Could not close source image file",
+			Message: "Could not open source image file",
 		})
 		return
 	}
@@ -82,6 +83,15 @@ func UploadImageHandler(c *gin.Context) {
 		c.JSON(500, config.ErrorWithStatus{
 			Code:    config.BlurError,
 			Message: errMsg,
+		})
+		return
+	}
+
+	// Close source image file
+	if err := srcImage.Close(); err != nil {
+		c.JSON(500, config.ErrorWithStatus{
+			Code:    config.CloseError,
+			Message: "Could not close source image file",
 		})
 		return
 	}

@@ -5,6 +5,8 @@ import (
 	"image/color/palette"
 	"image/draw"
 	"image/gif"
+	_ "image/jpeg"
+	_ "image/png"
 	"os"
 
 	"github.com/esimov/stackblur-go"

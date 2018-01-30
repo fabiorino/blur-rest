@@ -20,10 +20,9 @@ func (i *ImageMeta) ApplyDefaults() {
 	}
 }
 
-type Image struct {
-	GUID      string    `json:"guid"`
-	Timestamp string    `json:"timestamp"`
-	Meta      ImageMeta `json:"meta"`
+type image struct {
+	Timestamp string
+	Meta      ImageMeta
 }
 
 type Store interface {

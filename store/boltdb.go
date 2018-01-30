@@ -3,6 +3,7 @@ package store
 import (
 	"encoding/hex"
 	"encoding/json"
+	"time"
 
 	"github.com/boltdb/bolt"
 	"github.com/bsm/go-guid"
@@ -35,8 +36,14 @@ func NewBoltDB(fp string) (*BoltDB, error) {
 }
 
 func (b BoltDB) Insert(m ImageMeta) (string, error) {
-	// Encode image meta
-	encoded, err := json.Marshal(m)
+	// Define image object to store
+	img := image{
+		Timestamp: time.Now().Format(time.RFC3339),
+		Meta:      m,
+	}
+
+	// Encode image
+	encoded, err := json.Marshal(img)
 	if err != nil {
 		return "", err
 	}
@@ -58,7 +65,7 @@ func (b BoltDB) Insert(m ImageMeta) (string, error) {
 }
 
 func (b BoltDB) Get(guid string) (ImageMeta, error) {
-	var meta ImageMeta
+	var img image
 
 	err := b.db.View(func(tx *bolt.Tx) error {
 		// Get value
@@ -66,10 +73,10 @@ func (b BoltDB) Get(guid string) (ImageMeta, error) {
 		v := b.Get([]byte(guid))
 
 		// Decode JSON
-		return json.Unmarshal(v, &meta)
+		return json.Unmarshal(v, &img)
 	})
 
-	return meta, err
+	return img.Meta, err
 }
 
 func (b BoltDB) Delete(guid string) error {
@@ -80,6 +87,29 @@ func (b BoltDB) Delete(guid string) error {
 }
 
 func (b BoltDB) Purge() error {
+	// Timestamp an hour ago
+	maxTime := time.Now().Add(-time.Hour)
+
+	b.db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte(b.bucketName))
+
+		b.ForEach(func(k, v []byte) error {
+			var img image
+			json.Unmarshal(v, &img)
+
+			imgTime, err := time.Parse(time.RFC3339, img.Timestamp)
+			if err != nil {
+				return err
+			}
+
+			if imgTime.Before(maxTime) {
+				return b.Delete(k)
+			}
+
+			return nil
+		})
+		return nil
+	})
 
 	return nil
 }

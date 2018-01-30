@@ -106,6 +106,7 @@ func UploadImageHandler(c *gin.Context) {
 		return
 	}
 
+	// Return blurred image
 	c.Header("Content-Transfer-Encoding", "binary")
 	c.Header("Content-Type", "application/octet-stream")
 	c.File(destImage.Name())

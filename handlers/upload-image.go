@@ -75,6 +75,7 @@ func UploadImageHandler(c *gin.Context) {
 		})
 		return
 	}
+	defer os.Remove(destImage.Name())
 
 	// Blur
 	err = blur.Blur(srcImage, destImage, meta.Blur)
@@ -105,10 +106,10 @@ func UploadImageHandler(c *gin.Context) {
 		return
 	}
 
-	// Delete entry from DB
-	go config.GlobalConfig.Store.Delete(guid)
-
 	c.Header("Content-Transfer-Encoding", "binary")
 	c.Header("Content-Type", "application/octet-stream")
 	c.File(destImage.Name())
+
+	// Delete entry from DB
+	go config.GlobalConfig.Store.Delete(guid)
 }

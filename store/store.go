@@ -21,14 +21,13 @@ func (i *ImageMeta) ApplyDefaults() {
 }
 
 type image struct {
-	Timestamp string
-	Meta      ImageMeta
+	Timestamp string    `json:"timestamp"`
+	Meta      ImageMeta `json:"meta"`
 }
 
 type Store interface {
 	Insert(ImageMeta) (string, error)
 	Get(string) (ImageMeta, error)
 	Delete(string) error
-	Purge() error
 	Close() error
 }

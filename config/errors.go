@@ -8,8 +8,7 @@ type ErrorWithStatus struct {
 
 // Error codes
 const (
-	BaseError int = 1 + iota
-	BindingError
+	BindingError int = 1 + iota
 	JSONBodyError
 	StoreError
 	GUIDNotFoundError

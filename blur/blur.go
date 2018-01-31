@@ -16,9 +16,9 @@ func Blur(imgSrc *os.File, imgDest *os.File, radius int) error {
 		return err
 	}
 
-	// Blur image in using concurrency
+	// Blur image
 	image := imaging.Blur(src, float64(radius))
 
-	// Save the resulting image using JPEG format.
+	// Encode blurred image in JPEG
 	return imaging.Encode(imgDest, image, imaging.PNG)
 }

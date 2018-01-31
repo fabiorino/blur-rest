@@ -2,12 +2,12 @@ package store
 
 import "fmt"
 
-// ImageMeta represents the parameters the user can provide in their POST request
+// ImageMeta represents the parameters that the user can provide in their POST request
 type ImageMeta struct {
 	Blur int `json:"blur"`
 }
 
-// Validate checks the parameters the user provided
+// Validate checks the parameters that the user provided
 func (i *ImageMeta) Validate() error {
 	if i.Blur < 0 {
 		return fmt.Errorf("Blur must be > 0")

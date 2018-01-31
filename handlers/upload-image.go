@@ -11,7 +11,7 @@ import (
 )
 
 // UploadImageHandler handles the PUT request. The image uploaded by the user is stored in a temporary file.
-// At the end of the computation, the image is returned as an octet-stream and the temporary file is removed
+// At the end of the computation, the blurred image is returned as an octet-stream and the temporary files are removed
 func UploadImageHandler(c *gin.Context) {
 	guid := c.Param("guid")
 

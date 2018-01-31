@@ -45,7 +45,7 @@ func (b BoltDB) Insert(m ImageMeta) (string, error) {
 		Meta:      m,
 	}
 
-	// Encode image
+	// Encode metadata
 	encoded, err := json.Marshal(img)
 	if err != nil {
 		return "", err

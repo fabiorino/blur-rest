@@ -25,7 +25,7 @@ func PostImageMetaHandler(c *gin.Context) {
 	if err = c.BindJSON(&meta); err != nil {
 		errMsg := fmt.Sprintf("Could not bind the JSON body: %s", err.Error())
 		c.JSON(400, config.ErrorWithStatus{
-			Code:    config.BindingError,
+			Code:    config.JSONBodyError,
 			Message: errMsg,
 		})
 		return

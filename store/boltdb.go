@@ -86,34 +86,6 @@ func (b BoltDB) Delete(guid string) error {
 	})
 }
 
-func (b BoltDB) Purge() error {
-	// Timestamp an hour ago
-	maxTime := time.Now().Add(-time.Hour)
-
-	b.db.View(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte(b.bucketName))
-
-		b.ForEach(func(k, v []byte) error {
-			var img image
-			json.Unmarshal(v, &img)
-
-			imgTime, err := time.Parse(time.RFC3339, img.Timestamp)
-			if err != nil {
-				return err
-			}
-
-			if imgTime.Before(maxTime) {
-				return b.Delete(k)
-			}
-
-			return nil
-		})
-		return nil
-	})
-
-	return nil
-}
-
 func (b BoltDB) Close() error {
 	return b.db.Close()
 }

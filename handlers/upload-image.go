@@ -18,7 +18,7 @@ func UploadImageHandler(c *gin.Context) {
 	// Get meta from db
 	meta, err := config.GlobalConfig.Store.Get(guid)
 	if err != nil {
-		c.JSON(500, config.ErrorWithStatus{
+		c.JSON(404, config.ErrorWithStatus{
 			Code:    config.GUIDNotFoundError,
 			Message: "Provided GUID does not exist",
 		})
@@ -28,9 +28,10 @@ func UploadImageHandler(c *gin.Context) {
 	// Create temp file for source image
 	srcImage, err := ioutil.TempFile("", "source-image")
 	if err != nil {
+		errMsg := fmt.Sprintf("Could not create source image: %s", err.Error())
 		c.JSON(500, config.ErrorWithStatus{
 			Code:    config.TempFileError,
-			Message: "Could not create source image",
+			Message: errMsg,
 		})
 		return
 	}
@@ -40,18 +41,20 @@ func UploadImageHandler(c *gin.Context) {
 	body := c.Request.Body
 	content, err := ioutil.ReadAll(body)
 	if err != nil {
+		errMsg := fmt.Sprintf("Could not read uploded raw data: %s", err.Error())
 		c.JSON(500, config.ErrorWithStatus{
 			Code:    config.ReadError,
-			Message: "Could not read uploded raw data",
+			Message: errMsg,
 		})
 		return
 	}
 
 	// Write data into the file
 	if _, err := srcImage.Write(content); err != nil {
+		errMsg := fmt.Sprintf("Could not write uploded raw data: %s", err.Error())
 		c.JSON(500, config.ErrorWithStatus{
 			Code:    config.WriteError,
-			Message: "Could not write uploded raw data",
+			Message: errMsg,
 		})
 		return
 	}
@@ -59,9 +62,10 @@ func UploadImageHandler(c *gin.Context) {
 	// Open source image file
 	srcImage, err = os.Open(srcImage.Name())
 	if err != nil {
+		errMsg := fmt.Sprintf("Could not open source image file: %s", err.Error())
 		c.JSON(500, config.ErrorWithStatus{
 			Code:    config.CloseError,
-			Message: "Could not open source image file",
+			Message: errMsg,
 		})
 		return
 	}
@@ -69,9 +73,10 @@ func UploadImageHandler(c *gin.Context) {
 	// Create destionation image file
 	destImage, err := ioutil.TempFile("", "destination-image")
 	if err != nil {
+		errMsg := fmt.Sprintf("Could not create destination image: %s", err.Error())
 		c.JSON(500, config.ErrorWithStatus{
 			Code:    config.TempFileError,
-			Message: "Could not create destination image",
+			Message: errMsg,
 		})
 		return
 	}
@@ -90,18 +95,20 @@ func UploadImageHandler(c *gin.Context) {
 
 	// Close source image file
 	if err := srcImage.Close(); err != nil {
+		errMsg := fmt.Sprintf("Could not close source image file: %s", err.Error())
 		c.JSON(500, config.ErrorWithStatus{
 			Code:    config.CloseError,
-			Message: "Could not close source image file",
+			Message: errMsg,
 		})
 		return
 	}
 
 	// Close destination image file
 	if err := destImage.Close(); err != nil {
+		errMsg := fmt.Sprintf("Could not close destination image file: %s", err.Error())
 		c.JSON(500, config.ErrorWithStatus{
 			Code:    config.CloseError,
-			Message: "Could not close destination image file",
+			Message: errMsg,
 		})
 		return
 	}

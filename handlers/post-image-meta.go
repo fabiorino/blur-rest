@@ -3,6 +3,7 @@ package handlers
 import (
 	"blur-rest/config"
 	"blur-rest/store"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -22,9 +23,10 @@ func PostImageMetaHandler(c *gin.Context) {
 
 	// Bind JSON
 	if err = c.BindJSON(&meta); err != nil {
+		errMsg := fmt.Sprintf("Could not bind the JSON body: %s", err.Error())
 		c.JSON(400, config.ErrorWithStatus{
 			Code:    config.BindingError,
-			Message: "Could not bind the JSON body",
+			Message: errMsg,
 		})
 		return
 	}
@@ -42,9 +44,10 @@ func PostImageMetaHandler(c *gin.Context) {
 	// Store meta
 	var guid string
 	if guid, err = config.GlobalConfig.Store.Insert(meta); err != nil {
+		errMsg := fmt.Sprintf("Could not store meta: %s", err.Error())
 		c.JSON(500, config.ErrorWithStatus{
 			Code:    config.StoreError,
-			Message: "Could not store meta",
+			Message: errMsg,
 		})
 		return
 	}

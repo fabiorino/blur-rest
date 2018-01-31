@@ -7,12 +7,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// The JSON response message delivered to the user in case of success
 type response struct {
 	GUID string `json:"guid"`
 	URL  string `json:"upload-url"`
 }
 
-// PostImageMetaHandler receives the JSON data posted by the user and stores it
+// PostImageMetaHandler receives the JSON data posted by the user and stores it.
+// Returns a JSON response to the user
 func PostImageMetaHandler(c *gin.Context) {
 	var err error
 

@@ -9,12 +9,14 @@ import (
 	"github.com/bsm/go-guid"
 )
 
+// BoltDB represents the information needed to interact with a BoltDB database
 type BoltDB struct {
 	FilePath   string
 	db         *bolt.DB
 	bucketName string
 }
 
+// NewBoltDB returns a new BoltDB instance
 func NewBoltDB(fp string) (*BoltDB, error) {
 	// New database
 	database, err := bolt.Open(fp, 0600, nil)
@@ -35,6 +37,7 @@ func NewBoltDB(fp string) (*BoltDB, error) {
 	return &BoltDB{FilePath: fp, db: database, bucketName: bName}, nil
 }
 
+// Insert adds a new image metadata to the db
 func (b BoltDB) Insert(m ImageMeta) (string, error) {
 	// Define image object to store
 	img := image{
@@ -64,6 +67,7 @@ func (b BoltDB) Insert(m ImageMeta) (string, error) {
 	return guid, nil
 }
 
+// Get returns the metadata of an image given its guid, if exists
 func (b BoltDB) Get(guid string) (ImageMeta, error) {
 	var img image
 
@@ -79,6 +83,7 @@ func (b BoltDB) Get(guid string) (ImageMeta, error) {
 	return img.Meta, err
 }
 
+// Delete removes an entry from the db
 func (b BoltDB) Delete(guid string) error {
 	return b.db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(b.bucketName))
@@ -86,6 +91,7 @@ func (b BoltDB) Delete(guid string) error {
 	})
 }
 
+// Close closes the BoltDB session
 func (b BoltDB) Close() error {
 	return b.db.Close()
 }

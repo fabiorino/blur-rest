@@ -8,6 +8,7 @@ import (
 	"github.com/disintegration/imaging"
 )
 
+// Blur blurs the input image and writes the output in the imgDest file
 func Blur(imgSrc *os.File, imgDest *os.File, radius int) error {
 	// Decode source image
 	src, err := imaging.Open(imgSrc.Name())
